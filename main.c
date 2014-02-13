@@ -59,13 +59,15 @@ while(opcion!=0)
 
             case 2:
                 if(pilaVacia(&pila))
-                   printf("La pila esta vacia");
+                   printf("La pila esta vacia \n");
+                printf("La pila no esta vacia \n");
 
                 break;
 
             case 3:
                 if(pilaLLena(&pila))
-                 printf("La pila esta llena");
+                    printf("La pila esta llena \n");
+                printf("La pila no esta llena \n");
 
                 break;
 
@@ -73,14 +75,14 @@ while(opcion!=0)
 
                 if(verTope(&pila, &dato))
                 {
-                    printf("%d", dato.edad);
+                    printf("%d \n", dato.edad);
                     puts(dato.nom);
                     puts(dato.ape);
-                    printf("%f", dato.prom);
+                    printf("%f \n", dato.prom);
                 }
                 else
                 {
-                    printf("No hay tope");
+                    printf("No hay tope \n");
                 }
                 break;
 
@@ -89,18 +91,18 @@ while(opcion!=0)
                 ingresarDatos(&dato);
 
                 if(apilar(&pila, &dato))
-                   printf("Apilo");
+                   printf("Apilo \n");
                 else
-                   printf("No pudo apilar");
+                   printf("No pudo apilar \n");
 
                 break;
 
             case 6:
 
                 if(desapilar(&pila, &dato))
-                    printf("Desapilo");
+                    printf("Desapilo \n");
                 else
-                    printf("No pudo desapilar");
+                    printf("No pudo desapilar \n");
 
                 break;
 
@@ -119,6 +121,12 @@ while(opcion!=0)
             case 9:
 
                 mostrarArchivo(&dato);
+
+                break;
+
+            case 10:
+
+                sacarDeArchivo(&pila, &dato);
 
                 break;
 
@@ -142,17 +150,19 @@ return 0;
 int elegirMenu()
 {
      int opcion;
-     printf("**********MENU DE OPCIONES**********\n   \
-                1- Crear Pila\n                       \
-                2- Pila Vacia\n                       \
-                3- Pila LLena\n                       \
-                4- Ver tope de pila\n                 \
-                5- Apilar\n                           \
-                6- Desapilar\n                        \
-                7- Vaciar pila\n                      \
-                8- Guardar en Archivo\n               \
-                0- Salir\n                            \
-                INGRESE EL NUMERO DE OPCION: ");
+     printf("**********MENU DE OPCIONES**********\n \
+1- Crear Pila\n \
+2- Pila Vacia\n \
+3- Pila LLena\n \
+4- Ver tope de pila\n \
+5- Apilar\n \
+6- Desapilar\n \
+7- Vaciar pila\n \
+8- Guardar en Archivo\n \
+9- Mostrar Archivo\n \
+10- Sacar de Archivo\n \
+0- Salir\n \
+INGRESE EL NUMERO DE OPCION: ");
 
       scanf("%d",&opcion);
       return opcion;
@@ -264,12 +274,15 @@ void ingresarDatos(t_dato* pd)
 void guardarEnArchivo(t_pila *pp, t_dato *pd)
 {
     FILE *pf;
-    abrirArchivo(&pf, "ArchivoBin", "w+ b", CON_MSJ);
+    abrirArchivo(&pf, "ArchivoBin", "wb", CON_MSJ);
+    fseek(pf, 0, 0);
+
     while(!(pilaVacia(pp)))
     {
         desapilar(pp, pd);
         fwrite(pd, sizeof(t_dato), 1, pf);
     }
+    fclose(pf);
 }
 
 void mostrarArchivo(t_dato *pd)

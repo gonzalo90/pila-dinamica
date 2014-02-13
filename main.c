@@ -275,15 +275,40 @@ void guardarEnArchivo(t_pila *pp, t_dato *pd)
 void mostrarArchivo(t_dato *pd)
 {
     FILE *pf;
-    abrirArchivo(&pf, "ArchivoBin", "w+ b", CON_MSJ);
+    abrirArchivo(&pf, "ArchivoBin", "rb", CON_MSJ);
+    fread(pd, sizeof(t_dato), 1, pf);
+
     while(!feof(pf))
     {
+        printf("%d \n", pd -> edad);
+        puts(pd -> nom);
+        puts(pd -> ape);
+        printf("%f \n", pd ->prom);
+        fread(pd, sizeof(t_dato), 1, pf);
+    }
+    fclose(pf);
+}
+
+void sacarDeArchivo(t_pila *pp, t_dato *pd)
+{
+    FILE *pf;
+    long posCursor;
+    abrirArchivo(&pf, "ArchivoBin", "rb", CON_MSJ);
+    fseek(pf, 0, SEEK_END);
+    posCursor = (ftell(pf))/sizeof(t_dato);
+
+    for (posCursor-=1; posCursor>=0; --posCursor)
+    {
+
+        fseek(pf, posCursor*sizeof(t_dato), SEEK_SET);
         fread(pd, sizeof(t_dato), 1, pf);
         printf("%d \n", pd -> edad);
         puts(pd -> nom);
         puts(pd -> ape);
         printf("%f \n", pd ->prom);
+        apilar(pp, pd);
     }
+    fclose(pf);
 }
 
 

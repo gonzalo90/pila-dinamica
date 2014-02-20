@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct
+{
+}t_dato;
+
+typedef struct s_nodo
+{
+    t_dato dato;
+    struct s_nodo* izq;
+    struct s_nodo* der;
+}t_nodo;
+
+typedef t_nodo* t_arbol;
+
+typedef struct
+{
+    
+}
+
+void crearArbol(t_arbol*);
+int llenarArbol(t_arbol*, t_dato*);
+void preorden(t_arbol*);
+void inorden(t_arbol*);
+void posorden(t_arbol*);
+
+int main()
+{
+    t_arbol raiz;
+    t_dato dato;
+    crearArbol(&raiz);
+    llenarArbol(&raiz, &dato);
+    preorden(&raiz); 
+    inorden(&raiz);   
+    posorden(&raiz);      
+    return 0;
+}
+
+void crearArbol(t_arbol* p)
+{
+    *p == NULL;    
+}
+
+int llenarArbol(t_arbol* p, t_dato* d);
+{
+        
+}
+
+void preorden(t_arbol* p)
+{
+    if(&(*p) != NULL)
+    {
+        mostrar(&(*p) -> dato);
+        preorden(&(*p) -> izq);
+        preorden(&(*p) -> der);
+    }  
+}
+
+void inorden(t_arbol* p)
+{
+    if(&(*p) != NULL)
+    {
+        inorden(&(*p) -> izq);
+        mostrar(&(*p) -> dato); 
+        inorden(&(*p) -> der;               
+    }    
+}
+
+void posorden(t_arbol* p)
+{
+    if(&(*p) != NULL)
+    {
+        posorden(&(*p) -> izq);
+        posorden(&(*p) -> der);
+        mostrar(&(*p) -> dato);
+    }     
+}
+
+/*iterativas
+
+void preorden(t_arbol* p)
+{
+    t_nodo* aux;
+    while(&(*p) != NULL)
+    {
+        if()
+        mostrar(&(*p) -> dato);
+        p=&(*p)->izq;
+        
+       
+        
+        preorden(&(*p) -> izq);
+        preorden(&(*p) -> der);
+    }  
+}
+
+void inorden(t_arbol* p)
+{
+    if(&(*p) != NULL)
+    {
+        inorden(&(*p) -> izq);
+        mostrar(&(*p) -> dato); 
+        inorden(&(*p) -> der;               
+    }    
+}
+
+void posorden(t_arbol* p)
+{
+    if(&(*p) != NULL)
+    {
+        posorden(&(*p) -> izq);
+        posorden(&(*p) -> der);
+        mostrar(&(*p) -> dato);
+    }     
+}
+
+*/

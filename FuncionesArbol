@@ -1,0 +1,194 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+typedef struct
+{
+    int num;
+}t_dato;
+
+typedef struct s_nodo
+{
+    t_dato dato;
+    struct s_nodo* izq;
+    struct s_nodo* der;
+}t_nodo;
+
+typedef t_nodo* t_arbol;
+
+void crearArbol(t_arbol*);
+int cargarEnArbolR(t_arbol* , t_dato* );
+int comparar(t_dato* , t_dato* );
+void guardarArbolEnArchivo(FILE* , t_arbol* );
+void mostrarArchivo(FILE* , t_dato* );
+void mostrarHojas(t_arbol* );
+int cuentaHojas(t_arbol* );
+int cuentaNoHojas(t_arbol* );
+int cuentaHojasDerecha(t_arbol* );
+int cuentaNodosConHijosIzq(t_arbol* );
+
+int main()
+{
+    int i;
+    t_arbol arbol;
+    t_dato dato;
+    FILE *pf;
+    int cant;
+
+    crearArbol(&arbol);
+    printf("ingresar dato? si. 1 / no. 0\n");
+    scanf("%d", &i);
+    fflush(stdin);
+    while(i != 0)
+    {
+        printf("ingresar dato\n");
+        scanf("%d", &dato.num);
+        fflush(stdin);
+        cargarEnArbolR(&arbol, &dato);
+        printf("ingresar dato? si. 1 / no. 0\n");
+        scanf("%d", &i);
+        fflush(stdin);
+    }
+    /*posorden(&arbol);*/
+
+    if((pf = fopen("Arbolbinario", "w+ b")) == NULL)
+        return 1;
+
+    guardarArbolEnArchivo(pf, &arbol);
+    printf("\n""Datos en Archivo: ");
+    mostrarArchivo(pf, &dato);
+    printf("\n""Hojas: \n");
+    mostrarHojas(&arbol);
+    cant = cuentaHojas(&arbol);
+    printf("Cantidad de Hojas: %d\n", cant);
+    cant = cuentaNodosConHijosIzq(&arbol);
+    printf("Cantidad de Nodos Izquierda: %d\n", cant);
+    return 0;
+}
+
+void crearArbol(t_arbol* p)
+{
+    *p = NULL;
+}
+
+int cargarEnArbolR(t_arbol* p, t_dato* d)
+{
+    int cmp;
+    if(*p)
+    {
+        cmp = comparar(&(*p)->dato, d);
+        if(cmp == 0)
+           return 0;
+        if(cmp < 0)
+           return cargarEnArbolR(&(*p)->izq, d);
+        else
+           return cargarEnArbolR(&(*p)->der, d);
+    }
+    *p = (t_nodo*)malloc(sizeof(t_nodo));
+
+    if(*p == NULL)
+       return 0;
+
+    (*p)->izq = NULL;
+    (*p)->der = NULL;
+    (*p)->dato= *d;
+    return 1;
+}
+
+int comparar(t_dato* d, t_dato* e)
+{
+    return (d->num) - (e->num);
+}
+
+void guardarArbolEnArchivo(FILE* pf, t_arbol* p)
+{
+    if(*p)
+    {
+        fwrite(&(*p) -> dato, sizeof(t_dato), 1, pf);
+        guardarArbolEnArchivo(pf, &(*p) -> izq);
+        guardarArbolEnArchivo(pf, &(*p) -> der);
+
+    }
+}
+
+void mostrarArchivo(FILE* pf, t_dato* d)
+{
+    rewind(pf);
+    fread(d, sizeof(t_dato), 1, pf);
+    while(!feof(pf))
+    {
+        printf("%d\n", d -> num);
+        fread(d, sizeof(t_dato), 1, pf);
+    }
+
+}
+
+void cargarArbDesdeArch(FILE *pf, t_arbol *p)
+{
+    t_dato dato;
+    fread(&dato, sizeof(t_dato), 1, pf);
+    while(!feof(pf))
+    {
+        cargarEnArbolR(p, &dato);
+        fread(&dato, sizeof(t_dato), 1, pf);
+    }
+}
+
+void mostrarHojas(t_arbol* p)
+{
+    if(*p)
+    {
+        mostrarHojas(&(*p) -> izq);
+        mostrarHojas(&(*p) -> der);
+
+        if((*p)->izq == NULL && (*p)->der == NULL)
+            printf("%d \n", (*p)->dato.num);
+    }
+}
+
+int cuentaHojas(t_arbol* p)
+{
+    if(*p)
+    {
+        if((*p)->izq == NULL && (*p)->der == NULL)
+             return 1;
+
+        return cuentaHojas(&(*p) -> izq) +  cuentaHojas(&(*p) -> der);
+    }
+    return 0;
+}
+
+int cuentaNoHojas(t_arbol* p)
+{
+    if(*p)
+    {
+        if((*p)->izq == NULL && (*p)->der == NULL)
+             return 0;
+        if((*p)->izq != NULL || (*p)->der != NULL)
+            return cuentaNoHojas(&(*p) -> izq) +  cuentaNoHojas(&(*p) -> der) + 1;
+
+    }
+    return 0;
+}
+
+int cuentaHojasDerecha(t_arbol* p)
+{
+    if((*p)->der == NULL)
+        return 0;
+    p = &(*p)->der;
+    while(*p)
+    {
+         return cuentaHojas(p);
+    }
+    return 0;
+}
+
+int cuentaNodosConHijosIzq(t_arbol* p)   // Solo por izquierda
+{
+    if(!*p)
+        return 0;
+    if((*p)->izq)
+       return cuentaNodosConHijosIzq(&(*p)->izq) + cuentaNodosConHijosIzq(&(*p)->der) + 1;
+
+    return cuentaNodosConHijosIzq(&(*p)->der);
+}
